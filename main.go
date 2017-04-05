@@ -20,7 +20,6 @@ import (
 	"github.com/abaeve/auth-srv/proto"
 	"github.com/micro/go-micro/client"
 	"context"
-	"github.com/micro/micro/web"
 )
 
 type ResultModel struct {
