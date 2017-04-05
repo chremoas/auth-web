@@ -1,145 +1,105 @@
 package main
 
+//You find any references to it except in the bindata_assetsfs.go
+//Got the idea from: https://rockfloat.com/post/learning-golang-templates.html
+
 import (
-	"context"
 	"crypto/rand"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-
 	"github.com/antihax/goesi"
 	"github.com/astaxie/beego/session"
 	"github.com/gregjones/httpcache"
-	"gopkg.in/yaml.v2"
+	"html/template"
+	"log"
+	"github.com/micro/go-web"
+	"github.com/abaeve/auth-common/config"
+	"strconv"
+	"errors"
+	"github.com/abaeve/auth-srv/proto"
+	"github.com/micro/go-micro/client"
+	"context"
 )
 
-const htmlIndex = `<html><body>
-<a href="/login">Log in with EVE</a>
-</body></html>
-`
-
-type Configuration struct {
-	Application struct {
-		Namespace  string
-		Name       string
-		ListenHost string `yaml:"listenHost"`
-		ListenPort string `yaml:"listenPort"`
-		OAuth      struct {
-			ClientId     string `yaml:"clientId"`
-			ClientSecret string `yaml:"clientSecret"`
-			CallBackUrl  string `yaml:"callBackUrl"`
-		} `yaml:"oauth"`
-		Debug bool
-	}
-}
-
-type authError struct {
-	message string
-}
-
-func (ae authError) Error() string {
-	return ae.message
-}
-
-type key int
-
-const authenticatorKey key = 1
-const apiClientKey key = 2
-
-// pull the SSO Authenticator pointer from the context.
-func authenticatorFromContext(ctx context.Context) *goesi.SSOAuthenticator {
-	return ctx.Value(authenticatorKey).(*goesi.SSOAuthenticator)
-}
-
-// Add SSO Authenticator pointer to the context.
-func contextWithAuthenticator(ctx context.Context, a *goesi.SSOAuthenticator) context.Context {
-	return context.WithValue(ctx, authenticatorKey, a)
-}
-
-// pull the API Client pointer from the context.
-func apiClientFromContext(ctx context.Context) *goesi.APIClient {
-	return ctx.Value(apiClientKey).(*goesi.APIClient)
-}
-
-// Add API Client pointer to the context.
-func contextWithAPIClient(ctx context.Context, a *goesi.APIClient) context.Context {
-	return context.WithValue(ctx, apiClientKey, a)
-}
-
-// Add custom middleware for SSO Authenticator
-func middleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-		ctx := contextWithAuthenticator(req.Context(), authenticator)
-		ctx = contextWithAPIClient(ctx, apiClient)
-		next.ServeHTTP(rw, req.WithContext(ctx))
-	})
+type ResultModel struct {
+	Title string
+	Auth  string
 }
 
 var globalSessions *session.Manager
 var apiClient *goesi.APIClient
-var httpClient *http.Client
-var configuration *Configuration
+var configuration config.Configuration
 var authenticator *goesi.SSOAuthenticator
+var templates = template.New("")
+
+var version string = "1.0.0"
 
 // Then, initialize the session manager
 func init() {
+	//Setup our required globals.
 	globalSessions, _ = session.NewManager("memory", &session.ManagerConfig{CookieName: "gosessionid", EnableSetCookie: true, Gclifetime: 600})
 	go globalSessions.GC()
 
-	data, err := ioutil.ReadFile("application.yaml")
-
-	//<editor-fold desc="Configuration Launch Sanity check">
-	//TODO: Candidate for shared function for all my services.
-	if err != nil {
-		panic("Could not read application.yaml for configuration data.")
-	}
-
-	err = yaml.Unmarshal([]byte(data), &configuration)
+	err := configuration.Load("application.yaml")
 
 	if err != nil {
-		message, _ := fmt.Printf("Parsing application.yaml failed: %s", err)
-		panic(message)
+		panic("Had an issue parsing the application.yaml: " + err.Error())
 	}
-	//</editor-fold>
 
-	// Get a caching HTTP Client
-	httpClient = httpcache.NewMemoryCacheTransport().Client()
+	httpClient := httpcache.NewMemoryCacheTransport().Client()
 
 	// Get the ESI API Client
-	apiClient = goesi.NewAPIClient(httpClient, "aba-auth-web maurer.it@gmail.com")
+	apiClient = goesi.NewAPIClient(httpClient, "aba-auth-web maurer.it@gmail.com https://github.com/abaeve/auth-web")
 
 	// Allocate an SSO Authenticator
 	authenticator = goesi.NewSSOAuthenticator(
 		httpClient,
-		configuration.Application.OAuth.ClientId,
-		configuration.Application.OAuth.ClientSecret,
+		configuration.OAuth.ClientId,
+		configuration.OAuth.ClientSecret,
 
 		//TODO: Make this configurable as well so https can be a thing
-		"http://"+configuration.Application.ListenHost+":"+
-			configuration.Application.ListenPort+
-			configuration.Application.OAuth.CallBackUrl,
+		"http://" + configuration.Net.ListenHost + ":"+
+			strconv.Itoa(configuration.Net.ListenPort)+
+			configuration.OAuth.CallBackUrl,
 		nil,
 	)
+
+	//Initialize my templates
+	for _, path := range AssetNames() {
+		bytes, err := Asset(path)
+		if err != nil {
+			log.Panicf("Unable to parse: path=%s, err=%s", path, err)
+		}
+		templates.New(path).Parse(string(bytes))
+	}
 }
 
 func main() {
-	// Allocate a multiplexer
-	mux := http.NewServeMux()
+	service := web.NewService(
+		web.Name(configuration.Namespace+"."+configuration.Name),
+		web.Version(version),
+	)
 
-	// Add our paths and handlers
-	mux.Handle("/", http.HandlerFunc(handleMain))
-	mux.Handle("/login", http.HandlerFunc(handleEveLogin))
-	mux.Handle("/sso/callback", http.HandlerFunc(handleEveCallback))
-	mux.Handle("/test", http.HandlerFunc(handleValidateAgain))
+	service.Handle("/static/", http.StripPrefix("/static/", http.FileServer(assetFS())))
+	service.HandleFunc("/", middleware(handleIndex))
+	service.HandleFunc("/login", middleware(handleEveLogin))
+	service.HandleFunc(configuration.OAuth.CallBackUrl, middleware(handleEveCallback))
+	service.HandleFunc("/test", middleware(handleValidateAgain))
 
-	//TODO: This doesn't handle a sigint very gracefully
-	fmt.Println(http.ListenAndServe(configuration.Application.ListenHost+":"+configuration.Application.ListenPort, middleware(mux)))
+	// initialise service
+	if err := service.Init(); err != nil {
+		log.Fatal(err)
+	}
+
+	// run service
+	if err := service.Run(); err != nil {
+		log.Fatal(err)
+	}
 }
 
-func handleMain(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, htmlIndex)
+func handleIndex(w http.ResponseWriter, r *http.Request) {
+	templates.ExecuteTemplate(w, "templates/index.html", nil)
 }
 
 func handleEveLogin(w http.ResponseWriter, r *http.Request) {
@@ -158,6 +118,7 @@ func handleEveLogin(w http.ResponseWriter, r *http.Request) {
 	sess.Set("state", state)
 
 	// Build the authorize URL
+	//TODO: This is where we'd set extra needed scopes
 	redirectUrl := ssoauth.AuthorizeURL(state, true, nil)
 
 	// Redirect the user to CCP SSO
@@ -168,29 +129,18 @@ func handleEveCallback(w http.ResponseWriter, r *http.Request) {
 	sess, _ := globalSessions.SessionStart(w, r)
 	err := doAuth(w, r, sess)
 	if err != nil {
+		//TODO: Make another template for errors specifically for this endpoint
+		fmt.Printf("Received an error from doAuth: (%s)\n", err)
 		return
 	}
 
-	if configuration.Application.Debug {
-		//Don't try to pull this out... it'll never be there... doAuth function
-		//fmt.Print("Token: ")
-		//fmt.Println(goesi.TokenToJSON(sess.Get("token")))
+	internalAuthCode := sess.Get("internalAuthCode").(string)
 
-		fmt.Print("VerifyResponse: ")
-		verifyResponse, _ := json.Marshal(sess.Get("verifyResponse"))
-		fmt.Println(string(verifyResponse))
-
-		fmt.Print("Character: ")
-		fmt.Println(sess.Get("character"))
-
-		fmt.Print("Corporation: ")
-		fmt.Println(sess.Get("corporation"))
-
-		fmt.Print("Alliance: ")
-		fmt.Println(sess.Get("alliance"))
-	}
+	templates.ExecuteTemplate(w, "templates/authd.html", &ResultModel{Title: "Authd Up", Auth: internalAuthCode})
 }
 
+//This is good for educational purposes but should be stripped out in the production version.
+//TODO: Strip me out in production
 func handleValidateAgain(w http.ResponseWriter, r *http.Request) {
 	// Get the users session
 	sess, _ := globalSessions.SessionStart(w, r)
@@ -199,7 +149,7 @@ func handleValidateAgain(w http.ResponseWriter, r *http.Request) {
 	ssoauth := authenticatorFromContext(r.Context())
 	tokenTxt, ok := sess.Get("token").(goesi.CRESTToken)
 	if !ok {
-		fmt.Fprintf(w, "no token found\n")
+		fmt.Fprint(w, "no token found\n")
 		return
 	}
 
@@ -221,9 +171,9 @@ func handleValidateAgain(w http.ResponseWriter, r *http.Request) {
 
 func doAuth(w http.ResponseWriter, r *http.Request, sess session.Store) error {
 	if sess == nil {
-		fmt.Printf("No session, redirecting to /\n")
+		fmt.Print("No session, redirecting to /\n")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		return authError{message: "Invalid session"}
+		return errors.New("Invalid session")
 	}
 
 	//If our character is set we've already gone through this procedure... pull the stuff from the session
@@ -235,25 +185,28 @@ func doAuth(w http.ResponseWriter, r *http.Request, sess session.Store) error {
 		ssoauth := authenticatorFromContext(r.Context())
 		api := apiClientFromContext(r.Context())
 
-		//
+		//I really need to read up on how this is useful, what I've read is that it's to help prevent man in the middle attacks?
+		//But if they've intercepted the stream then they just return this... so I'm confused...
+		//Good blog post about it's usefulness, I feel educated:
+		//http://www.twobotechnologies.com/blog/2014/02/importance-of-state-in-oauth2.html
 		if state != stateValidate {
 			fmt.Printf("Invalid oauth state, expected '%s', got '%s'\n", stateValidate, state)
 			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-			return authError{message: fmt.Sprintf("Invalid oauth state, expected '%s', got '%s'\n", stateValidate, state)}
+			return errors.New(fmt.Sprintf("Invalid oauth state, expected '%s', got '%s'\n", stateValidate, state))
 		}
 
 		token, err := ssoauth.TokenExchange(code)
 		if err != nil {
 			fmt.Printf("Code exchange failed with '%s'\n", err)
 			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-			return authError{message: fmt.Sprintf("Code exchange failed with '%s'\n", err)}
+			return errors.New(fmt.Sprintf("Code exchange failed with '%s'\n", err))
 		}
 
 		tokenSource, err := ssoauth.TokenSource(token)
 		if err != nil {
 			fmt.Printf("Token retrieve failed with '%s'\n", err)
 			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-			return authError{message: fmt.Sprintf("Token retrieve failed with '%s'\n", err)}
+			return errors.New(fmt.Sprintf("Token retrieve failed with '%s'\n", err))
 		}
 
 		verifyReponse, err := ssoauth.Verify(tokenSource)
@@ -276,11 +229,46 @@ func doAuth(w http.ResponseWriter, r *http.Request, sess session.Store) error {
 			fmt.Printf("Had some kind of error getting the alliance '%s'\n", err)
 		}
 
+		//Auth internally, this is the source of the bot's auth code.
+		internalAuthClient := abaeve_auth.NewUserAuthenticationClient(configuration.Namespace+"."+configuration.ServiceNames.AuthSrv, client.DefaultClient)
+		response, err := internalAuthClient.Create(
+			context.Background(),
+			&abaeve_auth.AuthCreateRequest{
+				Alliance: &abaeve_auth.Alliance{
+					//TODO: Damn, why did I put int64 here?  At least I can upcast...
+					Id:     int64(corporation.AllianceId),
+					Name:   alliance.AllianceName,
+					Ticker: alliance.Ticker,
+				},
+				Corporation: &abaeve_auth.Corporation{
+					Id:     int64(character.CorporationId),
+					Name:   corporation.CorporationName,
+					Ticker: corporation.Ticker,
+				},
+				Character: &abaeve_auth.Character{
+					Id:   verifyReponse.CharacterID,
+					Name: character.Name,
+				},
+				Token: code,
+				//TODO: When we implement custom scopes, send them over as well
+				//AuthScope:
+			},
+		)
+
+		if err != nil {
+			return errors.New(fmt.Sprintf("Had an issue authing internally: (%s)", err))
+		}
+
+		if !response.Success {
+			return errors.New("Received a non-specific error from the internal auth server, please contact your administrator")
+		}
+
 		sess.Set("token", *token)
 		sess.Set("verifyResponse", verifyReponse)
 		sess.Set("character", character)
 		sess.Set("corporation", corporation)
 		sess.Set("alliance", alliance)
+		sess.Set("internalAuthCode", response.AuthenticationCode)
 	}
 
 	return nil
