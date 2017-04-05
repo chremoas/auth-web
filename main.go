@@ -14,12 +14,13 @@ import (
 	"html/template"
 	"log"
 	"github.com/micro/go-web"
-	"github.com/abaeve/auth-common/config"
+	"github.com/abaeve/services-common/config"
 	"strconv"
 	"errors"
 	"github.com/abaeve/auth-srv/proto"
 	"github.com/micro/go-micro/client"
 	"context"
+	"github.com/micro/micro/web"
 )
 
 type ResultModel struct {
