@@ -1,10 +1,9 @@
-application:
-  namespace: com.aba.srv
-  name: authweb
-  listenHost: localhost
-  listenPort: 3000
-  oauth:
-    clientId: some client id from CCP
-    clientSecret: some secret from CCP
-    callBackUrl: /sso/callback
-  debug: false
+namespace: com.aba.srv
+name: authweb
+listenHost: localhost
+listenPort: 3000
+oauth:
+  clientId: some client id from CCP
+  clientSecret: some secret from CCP
+  callBackUrl: /sso/callback
+debug: false
