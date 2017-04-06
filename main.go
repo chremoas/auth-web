@@ -20,6 +20,7 @@ import (
 	"github.com/abaeve/auth-srv/proto"
 	"github.com/micro/go-micro/client"
 	"context"
+	"github.com/antihax/goesi/v2"
 )
 
 type ResultModel struct {
@@ -224,35 +225,44 @@ func doAuth(w http.ResponseWriter, r *http.Request, sess session.Store) error {
 			fmt.Printf("Had some kind of error getting the corporation '%s'\n", err)
 		}
 
-		alliance, _, err := api.V2.AllianceApi.GetAlliancesAllianceId(corporation.AllianceId, nil)
-		if err != nil {
-			fmt.Printf("Had some kind of error getting the alliance '%s'\n", err)
+		var alliance goesiv2.GetAlliancesAllianceIdOk
+		if corporation.AllianceId != 0 {
+			alliance, _, err = api.V2.AllianceApi.GetAlliancesAllianceId(corporation.AllianceId, nil)
+			if err != nil {
+				fmt.Printf("Had some kind of error getting the alliance '%s'\n", err)
+			}
 		}
 
 		//Auth internally, this is the source of the bot's auth code.
+		//We know we'll have a corp and a character, we're not sure if the corp is in an alliance.
+		request := &abaeve_auth.AuthCreateRequest{
+			Corporation: &abaeve_auth.Corporation{
+				Id:     int64(character.CorporationId),
+				Name:   corporation.CorporationName,
+				Ticker: corporation.Ticker,
+			},
+			Character: &abaeve_auth.Character{
+				Id:   verifyReponse.CharacterID,
+				Name: character.Name,
+			},
+			Token: code,
+			//TODO: When we implement custom scopes, send them over as well
+			//AuthScope:
+		}
+
+		if corporation.AllianceId != 0 {
+			request.Alliance = &abaeve_auth.Alliance{
+				//TODO: Damn, why did I put int64 here?  At least I can upcast...
+				Id:     int64(corporation.AllianceId),
+				Name:   alliance.AllianceName,
+				Ticker: alliance.Ticker,
+			}
+		}
+
 		internalAuthClient := abaeve_auth.NewUserAuthenticationClient(configuration.Namespace+"."+configuration.ServiceNames.AuthSrv, client.DefaultClient)
 		response, err := internalAuthClient.Create(
 			context.Background(),
-			&abaeve_auth.AuthCreateRequest{
-				Alliance: &abaeve_auth.Alliance{
-					//TODO: Damn, why did I put int64 here?  At least I can upcast...
-					Id:     int64(corporation.AllianceId),
-					Name:   alliance.AllianceName,
-					Ticker: alliance.Ticker,
-				},
-				Corporation: &abaeve_auth.Corporation{
-					Id:     int64(character.CorporationId),
-					Name:   corporation.CorporationName,
-					Ticker: corporation.Ticker,
-				},
-				Character: &abaeve_auth.Character{
-					Id:   verifyReponse.CharacterID,
-					Name: character.Name,
-				},
-				Token: code,
-				//TODO: When we implement custom scopes, send them over as well
-				//AuthScope:
-			},
+			request,
 		)
 
 		if err != nil {
