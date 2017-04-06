@@ -4,23 +4,23 @@ package main
 //Got the idea from: https://rockfloat.com/post/learning-golang-templates.html
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"errors"
 	"fmt"
-	"net/http"
+	"github.com/abaeve/auth-srv/proto"
+	"github.com/abaeve/services-common/config"
 	"github.com/antihax/goesi"
+	"github.com/antihax/goesi/v2"
 	"github.com/astaxie/beego/session"
 	"github.com/gregjones/httpcache"
+	"github.com/micro/go-micro/client"
+	"github.com/micro/go-web"
 	"html/template"
 	"log"
-	"github.com/micro/go-web"
-	"github.com/abaeve/services-common/config"
+	"net/http"
 	"strconv"
-	"errors"
-	"github.com/abaeve/auth-srv/proto"
-	"github.com/micro/go-micro/client"
-	"context"
-	"github.com/antihax/goesi/v2"
 )
 
 type ResultModel struct {
