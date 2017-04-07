@@ -8,10 +8,10 @@
         <p class="lead">Sign in complete.</p>
         <p>If you're not already signed into the server use the link below to get invited. (or right click and copy-link
             for the Windows/OSX Client)</p>
-        <p><a href="https://discord.gg/CwCMPz9" target="_blank"><img src="/static/Discord-Logo-Wordmark-WnC.png"
-                                                                     width="350px"/></a></p>
+        <p><a href="{{ .DiscordUrl }}" target="_blank"><img src="/static/Discord-Logo-Wordmark-WnC.png"
+                                                            width="350px"/></a></p>
         <p>Once you're in chat copy and paste the entire line below to have the bot add you to the correct roles.</p>
-        <p><b>!auth {{ .Auth }}</b></p>
+        <p><b>!{{ .Name }} {{ .Auth }}</b></p>
     </div>
 </div>
 {{ template "templates/footer.html" }}

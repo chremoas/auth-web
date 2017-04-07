@@ -7,3 +7,5 @@ oauth:
   clientSecret: some secret from CCP
   callBackUrl: /sso/callback
 debug: false
+discord:
+  inviteUrl: url to be used for invitations

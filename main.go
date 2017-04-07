@@ -24,8 +24,10 @@ import (
 )
 
 type ResultModel struct {
-	Title string
-	Auth  string
+	Title      string
+	Auth       string
+	DiscordUrl string
+	Name       string
 }
 
 var globalSessions *session.Manager
@@ -137,7 +139,14 @@ func handleEveCallback(w http.ResponseWriter, r *http.Request) {
 
 	internalAuthCode := sess.Get("internalAuthCode").(string)
 
-	templates.ExecuteTemplate(w, "templates/authd.html", &ResultModel{Title: "Authd Up", Auth: internalAuthCode})
+	templates.ExecuteTemplate(w, "templates/authd.html",
+		&ResultModel{
+			Title:      "Authd Up",
+			Auth:       internalAuthCode,
+			DiscordUrl: configuration.Discord.InviteUrl,
+			Name:       configuration.Name,
+		},
+	)
 }
 
 //This is good for educational purposes but should be stripped out in the production version.
