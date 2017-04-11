@@ -130,19 +130,23 @@ func handleEveLogin(w http.ResponseWriter, r *http.Request) {
 
 func handleEveCallback(w http.ResponseWriter, r *http.Request) {
 	sess, _ := globalSessions.SessionStart(w, r)
-	err := doAuth(w, r, sess)
+	if sess == nil {
+		fmt.Print("No session, redirecting to /\n")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
+	}
+
+	internalAuthCode, err := doAuth(w, r, sess)
 	if err != nil {
 		//TODO: Make another template for errors specifically for this endpoint
 		fmt.Printf("Received an error from doAuth: (%s)\n", err)
 		return
 	}
 
-	internalAuthCode := sess.Get("internalAuthCode").(string)
-
 	templates.ExecuteTemplate(w, "templates/authd.html",
 		&ResultModel{
 			Title:      "Authd Up",
-			Auth:       internalAuthCode,
+			Auth:       *internalAuthCode,
 			DiscordUrl: configuration.Discord.InviteUrl,
 			Name:       configuration.Name,
 		},
@@ -179,116 +183,100 @@ func handleValidateAgain(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func doAuth(w http.ResponseWriter, r *http.Request, sess session.Store) error {
-	if sess == nil {
-		fmt.Print("No session, redirecting to /\n")
+func doAuth(w http.ResponseWriter, r *http.Request, sess session.Store) (*string, error) {
+	state := r.FormValue("state")
+	code := r.FormValue("code")
+	stateValidate := sess.Get("state")
+
+	ssoauth := authenticatorFromContext(r.Context())
+	api := apiClientFromContext(r.Context())
+
+	//I really need to read up on how this is useful, what I've read is that it's to help prevent man in the middle attacks?
+	//But if they've intercepted the stream then they just return this... so I'm confused...
+	//Good blog post about it's usefulness, I feel educated:
+	//http://www.twobotechnologies.com/blog/2014/02/importance-of-state-in-oauth2.html
+	if state != stateValidate {
+		fmt.Printf("Invalid oauth state, expected '%s', got '%s'\n", stateValidate, state)
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		return errors.New("Invalid session")
+		return nil, errors.New(fmt.Sprintf("Invalid oauth state, expected '%s', got '%s'\n", stateValidate, state))
 	}
 
-	//If our character is set we've already gone through this procedure... pull the stuff from the session
-	if sess.Get("character") == nil {
-		state := r.FormValue("state")
-		code := r.FormValue("code")
-		stateValidate := sess.Get("state")
-
-		ssoauth := authenticatorFromContext(r.Context())
-		api := apiClientFromContext(r.Context())
-
-		//I really need to read up on how this is useful, what I've read is that it's to help prevent man in the middle attacks?
-		//But if they've intercepted the stream then they just return this... so I'm confused...
-		//Good blog post about it's usefulness, I feel educated:
-		//http://www.twobotechnologies.com/blog/2014/02/importance-of-state-in-oauth2.html
-		if state != stateValidate {
-			fmt.Printf("Invalid oauth state, expected '%s', got '%s'\n", stateValidate, state)
-			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-			return errors.New(fmt.Sprintf("Invalid oauth state, expected '%s', got '%s'\n", stateValidate, state))
-		}
-
-		token, err := ssoauth.TokenExchange(code)
-		if err != nil {
-			fmt.Printf("Code exchange failed with '%s'\n", err)
-			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-			return errors.New(fmt.Sprintf("Code exchange failed with '%s'\n", err))
-		}
-
-		tokenSource, err := ssoauth.TokenSource(token)
-		if err != nil {
-			fmt.Printf("Token retrieve failed with '%s'\n", err)
-			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-			return errors.New(fmt.Sprintf("Token retrieve failed with '%s'\n", err))
-		}
-
-		verifyReponse, err := ssoauth.Verify(tokenSource)
-		if err != nil {
-			fmt.Printf("Had some kind of error getting the verify response '%s'\n", err)
-		}
-
-		character, _, err := api.V4.CharacterApi.GetCharactersCharacterId(int32(verifyReponse.CharacterID), nil)
-		if err != nil {
-			fmt.Printf("Had some kind of error getting the character '%s'\n", err)
-		}
-
-		corporation, _, err := api.V3.CorporationApi.GetCorporationsCorporationId(character.CorporationId, nil)
-		if err != nil {
-			fmt.Printf("Had some kind of error getting the corporation '%s'\n", err)
-		}
-
-		var alliance goesiv2.GetAlliancesAllianceIdOk
-		if corporation.AllianceId != 0 {
-			alliance, _, err = api.V2.AllianceApi.GetAlliancesAllianceId(corporation.AllianceId, nil)
-			if err != nil {
-				fmt.Printf("Had some kind of error getting the alliance '%s'\n", err)
-			}
-		}
-
-		//Auth internally, this is the source of the bot's auth code.
-		//We know we'll have a corp and a character, we're not sure if the corp is in an alliance.
-		request := &abaeve_auth.AuthCreateRequest{
-			Corporation: &abaeve_auth.Corporation{
-				Id:     int64(character.CorporationId),
-				Name:   corporation.CorporationName,
-				Ticker: corporation.Ticker,
-			},
-			Character: &abaeve_auth.Character{
-				Id:   verifyReponse.CharacterID,
-				Name: character.Name,
-			},
-			Token: code,
-			//TODO: When we implement custom scopes, send them over as well
-			//AuthScope:
-		}
-
-		if corporation.AllianceId != 0 {
-			request.Alliance = &abaeve_auth.Alliance{
-				//TODO: Damn, why did I put int64 here?  At least I can upcast...
-				Id:     int64(corporation.AllianceId),
-				Name:   alliance.AllianceName,
-				Ticker: alliance.Ticker,
-			}
-		}
-
-		internalAuthClient := abaeve_auth.NewUserAuthenticationClient(configuration.Namespace+"."+configuration.ServiceNames.AuthSrv, client.DefaultClient)
-		response, err := internalAuthClient.Create(
-			context.Background(),
-			request,
-		)
-
-		if err != nil {
-			return errors.New(fmt.Sprintf("Had an issue authing internally: (%s)", err))
-		}
-
-		if !response.Success {
-			return errors.New("Received a non-specific error from the internal auth server, please contact your administrator")
-		}
-
-		sess.Set("token", *token)
-		sess.Set("verifyResponse", verifyReponse)
-		sess.Set("character", character)
-		sess.Set("corporation", corporation)
-		sess.Set("alliance", alliance)
-		sess.Set("internalAuthCode", response.AuthenticationCode)
+	token, err := ssoauth.TokenExchange(code)
+	if err != nil {
+		fmt.Printf("Code exchange failed with '%s'\n", err)
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return nil, errors.New(fmt.Sprintf("Code exchange failed with '%s'\n", err))
 	}
 
-	return nil
+	tokenSource, err := ssoauth.TokenSource(token)
+	if err != nil {
+		fmt.Printf("Token retrieve failed with '%s'\n", err)
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return nil, errors.New(fmt.Sprintf("Token retrieve failed with '%s'\n", err))
+	}
+
+	verifyReponse, err := ssoauth.Verify(tokenSource)
+	if err != nil {
+		fmt.Printf("Had some kind of error getting the verify response '%s'\n", err)
+	}
+
+	character, _, err := api.V4.CharacterApi.GetCharactersCharacterId(int32(verifyReponse.CharacterID), nil)
+	if err != nil {
+		fmt.Printf("Had some kind of error getting the character '%s'\n", err)
+	}
+
+	corporation, _, err := api.V3.CorporationApi.GetCorporationsCorporationId(character.CorporationId, nil)
+	if err != nil {
+		fmt.Printf("Had some kind of error getting the corporation '%s'\n", err)
+	}
+
+	var alliance goesiv2.GetAlliancesAllianceIdOk
+	if corporation.AllianceId != 0 {
+		alliance, _, err = api.V2.AllianceApi.GetAlliancesAllianceId(corporation.AllianceId, nil)
+		if err != nil {
+			fmt.Printf("Had some kind of error getting the alliance '%s'\n", err)
+		}
+	}
+
+	//Auth internally, this is the source of the bot's auth code.
+	//We know we'll have a corp and a character, we're not sure if the corp is in an alliance.
+	request := &abaeve_auth.AuthCreateRequest{
+		Corporation: &abaeve_auth.Corporation{
+			Id:     int64(character.CorporationId),
+			Name:   corporation.CorporationName,
+			Ticker: corporation.Ticker,
+		},
+		Character: &abaeve_auth.Character{
+			Id:   verifyReponse.CharacterID,
+			Name: character.Name,
+		},
+		Token: code,
+		//TODO: When we implement custom scopes, send them over as well
+		//AuthScope:
+	}
+
+	if corporation.AllianceId != 0 {
+		request.Alliance = &abaeve_auth.Alliance{
+			//TODO: Damn, why did I put int64 here?  At least I can upcast...
+			Id:     int64(corporation.AllianceId),
+			Name:   alliance.AllianceName,
+			Ticker: alliance.Ticker,
+		}
+	}
+
+	internalAuthClient := abaeve_auth.NewUserAuthenticationClient(configuration.Namespace+"."+configuration.ServiceNames.AuthSrv, client.DefaultClient)
+	response, err := internalAuthClient.Create(
+		context.Background(),
+		request,
+	)
+
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("Had an issue authing internally: (%s)", err))
+	}
+
+	if !response.Success {
+		return nil, errors.New("Received a non-specific error from the internal auth server, please contact your administrator")
+	}
+
+	return &response.AuthenticationCode, nil
 }
