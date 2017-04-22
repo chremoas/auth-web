@@ -18,7 +18,7 @@ import (
 	"github.com/astaxie/beego/session"
 	"github.com/gregjones/httpcache"
 	"github.com/micro/go-micro/client"
-	"github.com/micro/go-web"
+	web "github.com/micro/go-web"
 	"html/template"
 	"log"
 	"net/http"
@@ -84,6 +84,8 @@ func main() {
 	service := web.NewService(
 		web.Name(configuration.Namespace+"."+configuration.Name),
 		web.Version(version),
+		web.Address(configuration.Net.ListenHost + ":"+
+			strconv.Itoa(configuration.Net.ListenPort)),
 	)
 
 	service.Handle("/static/", http.StripPrefix("/static/", http.FileServer(assetFS())))
@@ -104,6 +106,7 @@ func main() {
 }
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Yep, I was hit")
 	templates.ExecuteTemplate(w, "templates/index.html", nil)
 }
 
