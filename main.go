@@ -3,6 +3,8 @@ package main
 //You find any references to it except in the bindata_assetsfs.go
 //Got the idea from: https://rockfloat.com/post/learning-golang-templates.html
 
+//go:generate go-bindata-assetfs static/... templates/...
+
 import (
 	"context"
 	"crypto/rand"
