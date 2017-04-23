@@ -9,3 +9,5 @@ oauth:
 debug: false
 discord:
   inviteUrl: url to be used for invitations
+serviceNames:
+  authSrv: auth-srv
