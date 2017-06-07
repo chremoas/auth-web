@@ -62,11 +62,7 @@ func init() {
 		httpClient,
 		configuration.OAuth.ClientId,
 		configuration.OAuth.ClientSecret,
-
-		//TODO: Make this configurable as well so https can be a thing
-		"http://" + configuration.Net.ListenHost + ":"+
-			strconv.Itoa(configuration.Net.ListenPort)+
-			configuration.OAuth.CallBackUrl,
+		configuration.OAuth.CallBackUrl,
 		nil,
 	)
 
