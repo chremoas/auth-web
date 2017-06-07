@@ -57,7 +57,7 @@ func init() {
 	// Get the ESI API Client
 	apiClient = goesi.NewAPIClient(httpClient, "aba-auth-web maurer.it@gmail.com https://github.com/abaeve/auth-web")
 
-	fullCallbackUrl := configuration.OAuth.CallBackProtocol + "://" + configuration.OAuth.CallBackHost + "/" + configuration.OAuth.CallBackUrl
+	fullCallbackUrl := configuration.OAuth.CallBackProtocol + "://" + configuration.OAuth.CallBackHost + configuration.OAuth.CallBackUrl
 
 	// Allocate an SSO Authenticator
 	authenticator = goesi.NewSSOAuthenticator(
