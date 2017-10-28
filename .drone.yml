@@ -1,6 +1,6 @@
 workspace:
   base: /go
-  path: src/github.com/abaeve/auth-bot
+  path: src/git.maurer-it.net/abaeve/auth-bot
 
 pipeline:
   build:
