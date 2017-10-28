@@ -14,7 +14,7 @@ import (
 	"github.com/abaeve/auth-srv/proto"
 	"github.com/abaeve/services-common/config"
 	"github.com/antihax/goesi"
-	"github.com/antihax/goesi/v2"
+	"github.com/antihax/goesi/esi"
 	"github.com/astaxie/beego/session"
 	"github.com/gregjones/httpcache"
 	"github.com/micro/go-micro/client"
@@ -82,7 +82,7 @@ func main() {
 	service := web.NewService(
 		web.Name(configuration.Namespace+"."+configuration.Name),
 		web.Version(version),
-		web.Address(configuration.Net.ListenHost + ":"+
+		web.Address(configuration.Net.ListenHost+":"+
 			strconv.Itoa(configuration.Net.ListenPort)),
 	)
 
@@ -103,8 +103,7 @@ func main() {
 	}
 }
 
-func handleIndex(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Yep, I was hit")
+func handleIndex(w http.ResponseWriter, _ *http.Request) {
 	templates.ExecuteTemplate(w, "templates/index.html", nil)
 }
 
@@ -223,19 +222,19 @@ func doAuth(w http.ResponseWriter, r *http.Request, sess session.Store) (*string
 		fmt.Printf("Had some kind of error getting the verify response '%s'\n", err)
 	}
 
-	character, _, err := api.V4.CharacterApi.GetCharactersCharacterId(int32(verifyReponse.CharacterID), nil)
+	character, _, err := api.ESI.CharacterApi.GetCharactersCharacterId(context.Background(), int32(verifyReponse.CharacterID), nil)
 	if err != nil {
 		fmt.Printf("Had some kind of error getting the character '%s'\n", err)
 	}
 
-	corporation, _, err := api.V3.CorporationApi.GetCorporationsCorporationId(character.CorporationId, nil)
+	corporation, _, err := api.ESI.CorporationApi.GetCorporationsCorporationId(context.Background(), character.CorporationId, nil)
 	if err != nil {
 		fmt.Printf("Had some kind of error getting the corporation '%s'\n", err)
 	}
 
-	var alliance goesiv2.GetAlliancesAllianceIdOk
+	var alliance esi.GetAlliancesAllianceIdOk
 	if corporation.AllianceId != 0 {
-		alliance, _, err = api.V2.AllianceApi.GetAlliancesAllianceId(corporation.AllianceId, nil)
+		alliance, _, err = api.ESI.AllianceApi.GetAlliancesAllianceId(context.Background(), corporation.AllianceId, nil)
 		if err != nil {
 			fmt.Printf("Had some kind of error getting the alliance '%s'\n", err)
 		}

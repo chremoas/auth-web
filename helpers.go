@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/antihax/goesi"
 	"context"
+	"github.com/antihax/goesi"
 	"net/http"
 )
 
