@@ -14,10 +14,10 @@
 package main
 
 import (
+	"github.com/elazarl/go-bindata-assetfs"
 	"bytes"
 	"compress/gzip"
 	"fmt"
-	"github.com/elazarl/go-bindata-assetfs"
 	"io"
 	"io/ioutil"
 	"os"
@@ -92,7 +92,7 @@ func staticDiscordLogoWordmarkWncPng() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "static/Discord-Logo-Wordmark-WnC.png", size: 10805, mode: os.FileMode(420), modTime: time.Unix(1491271461, 0)}
+	info := bindataFileInfo{name: "static/Discord-Logo-Wordmark-WnC.png", size: 10805, mode: os.FileMode(420), modTime: time.Unix(1509212444, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -112,7 +112,7 @@ func staticEve_sso_login_buttons_large_blackPng() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "static/EVE_SSO_Login_Buttons_Large_Black.png", size: 4008, mode: os.FileMode(420), modTime: time.Unix(1491268699, 0)}
+	info := bindataFileInfo{name: "static/EVE_SSO_Login_Buttons_Large_Black.png", size: 4008, mode: os.FileMode(420), modTime: time.Unix(1509212444, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -132,7 +132,7 @@ func staticStylesheetsBootstrapMinCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "static/stylesheets/bootstrap.min.css", size: 100649, mode: os.FileMode(420), modTime: time.Unix(1491269081, 0)}
+	info := bindataFileInfo{name: "static/stylesheets/bootstrap.min.css", size: 100649, mode: os.FileMode(420), modTime: time.Unix(1509212444, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -152,7 +152,7 @@ func staticStylesheetsMainCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "static/stylesheets/main.css", size: 1263, mode: os.FileMode(420), modTime: time.Unix(1491268807, 0)}
+	info := bindataFileInfo{name: "static/stylesheets/main.css", size: 1263, mode: os.FileMode(420), modTime: time.Unix(1509212444, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -172,7 +172,7 @@ func templatesAuthdHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/authd.html", size: 823, mode: os.FileMode(420), modTime: time.Unix(1492838937, 0)}
+	info := bindataFileInfo{name: "templates/authd.html", size: 823, mode: os.FileMode(420), modTime: time.Unix(1509212444, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -192,12 +192,12 @@ func templatesFooterHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/footer.html", size: 15, mode: os.FileMode(420), modTime: time.Unix(1491272242, 0)}
+	info := bindataFileInfo{name: "templates/footer.html", size: 15, mode: os.FileMode(420), modTime: time.Unix(1509212444, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
 
-var _templatesHeaderHtml = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x94\x91\x4f\x72\xf3\x20\x0c\xc5\xf7\x39\x05\x1f\xfb\xa0\x2f\xcd\xa6\xd3\x01\x9f\xa2\x17\x50\x40\x89\x71\x31\xb8\x48\xf9\xe3\xc9\xe4\xee\x9d\xd8\x49\xda\xe9\x74\x93\x15\xe8\xa7\xe1\x3d\xf4\x64\xff\x85\xe2\x65\x1c\x48\xb5\xd2\xa7\x66\x61\xef\x07\x61\x68\x16\x4a\x29\x65\x7b\x12\x54\xbe\xc5\xca\x24\x4e\xef\x65\xbb\x7c\xd5\xb7\x96\x44\x49\xd4\x9c\xcf\xca\xbc\x5f\x6f\xea\x72\xb1\x30\xb3\x1f\x4f\x33\xf6\xe4\xf4\x21\xd2\x71\x28\x55\xb4\xf2\x25\x0b\x65\x71\xfa\x18\x83\xb4\x2e\xd0\x21\x7a\x5a\x4e\xc5\x5d\x37\xc5\xfc\xa1\x2a\x25\xa7\x59\xc6\x44\xdc\x12\x89\x56\x6d\xa5\xed\x95\xa0\x44\x0f\xdf\x0d\x86\x4d\x29\xc2\x52\x71\x30\x7d\xcc\xc6\x33\xdf\x75\xd8\xd7\x38\x88\xba\xce\xe7\xb4\xd0\x49\xa0\xc3\x03\xce\x54\x2b\xae\xde\xe9\x56\x64\xe0\x37\x00\xec\xf0\x64\x76\xa5\xec\x12\xe1\x10\xd9\xf8\xd2\x4f\x0c\x52\xdc\x30\x74\x9f\x7b\xaa\x23\xbc\x98\xff\x66\x7d\x2b\x26\xaf\x8e\x75\x63\x61\x16\x7c\xde\x33\x93\x84\x8c\xe6\xf1\x7d\x1f\xf2\xe4\xfb\x00\xb0\x36\x2b\xb3\x82\xee\xf7\x88\x7f\xd8\x3e\x19\x59\x8f\x8f\xa4\x2c\xcc\xcb\xb6\x9b\x12\xc6\xe6\x2b\x00\x00\xff\xff\x94\x34\x60\xad\x11\x02\x00\x00")
+var _templatesHeaderHtml = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x94\x92\xdf\x6e\xeb\x20\x0c\x87\xef\xfb\x14\x1c\xee\x8b\x4f\xd7\x9b\x69\x0a\x79\x8a\xbd\x80\x03\x6e\x43\x46\x20\xc3\xee\x9f\xa8\xea\xbb\x4f\x4d\x9a\x6e\x9a\x76\xd3\x2b\xf0\x67\xe9\xf7\x61\x8b\xea\x9f\xcf\x4e\xc6\x81\x54\x2b\x7d\xac\x57\xd5\x72\x10\xfa\x7a\xa5\x94\x52\x55\x4f\x82\xca\xb5\x58\x98\xc4\xea\x83\xec\xd6\xaf\xfa\xde\x6a\x90\x49\xb5\x85\x76\x56\xc3\xc2\x24\x48\xa4\xfa\x72\x51\xe6\xfd\x76\x53\xd7\x6b\x05\x33\xfb\x11\x97\xb0\x27\xab\x8f\x81\x4e\x43\x2e\xa2\x95\xcb\x49\x28\x89\xd5\xa7\xe0\xa5\xb5\x9e\x8e\xc1\xd1\x7a\x2a\x96\xdc\x18\xd2\x87\x2a\x14\xad\x66\x19\x23\x71\x4b\x24\x7a\x91\xb3\xa0\x04\x07\xdf\x1d\x86\x26\x67\x61\x29\x38\x98\x3e\x24\xe3\x98\x97\x20\x76\x25\x0c\xa2\x6e\x43\x5b\x2d\x74\x16\xe8\xf0\x88\x33\xd5\x8a\x8b\xb3\xba\x15\x19\xf8\x0d\x00\x3b\x3c\x9b\x7d\xce\xfb\x48\x38\x04\x36\x2e\xf7\x13\x83\x18\x1a\x86\xee\xf3\x40\x65\x84\x17\xf3\xdf\x6c\xef\xc5\xe4\xea\x58\xd7\x15\xcc\x81\xcf\x3b\x13\x89\x4f\x68\x1e\xcf\x77\x3e\x4d\xde\x07\x80\xad\xd9\x98\x0d\x74\xbf\x47\xfc\x43\xfb\xec\xce\x7a\x7c\xac\xaa\x82\xf9\x0b\x54\x4d\xf6\x63\xfd\x15\x00\x00\xff\xff\xea\xf2\xca\xd0\x27\x02\x00\x00")
 
 func templatesHeaderHtmlBytes() ([]byte, error) {
 	return bindataRead(
@@ -212,12 +212,12 @@ func templatesHeaderHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/header.html", size: 529, mode: os.FileMode(420), modTime: time.Unix(1492838929, 0)}
+	info := bindataFileInfo{name: "templates/header.html", size: 551, mode: os.FileMode(420), modTime: time.Unix(1509421395, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
 
-var _templatesIndexHtml = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x74\x91\xb1\x6e\xc2\x30\x10\x86\x77\x9e\xe2\xe4\x1d\x2c\xf6\x90\x81\x36\x1b\x12\x03\x12\x6b\x74\x38\x26\x76\xb9\xf8\x22\xfb\x1c\x54\x21\xde\xbd\x6a\x9a\xa8\x69\xab\x4e\xb9\xe8\xf3\xff\xf9\x97\xef\xf1\x00\xb1\x5d\x4f\x28\x16\xd4\x3c\x25\xed\x2c\x36\x36\x6e\x9c\x74\xa4\xe0\xf9\x5c\x15\x8d\x1f\xc0\x10\xa6\xb4\x53\x86\x83\xa0\x0f\x36\xaa\x72\x05\x00\xb0\x64\x5f\xb9\x09\x8c\x30\xd3\xcc\x02\x0e\x10\x70\x58\xf7\x9e\x28\x41\x9f\x89\xd6\xd1\xb7\x4e\x54\x59\xe8\x4c\x93\x4b\x37\x7e\xf8\xab\x7d\xcb\xdd\x85\x25\x72\x58\x9a\xdd\xb6\x7c\xf5\xc9\x70\x6c\x0a\xed\xb6\x0b\xd0\xcf\x31\xb2\xd8\xa8\xf2\x85\xbc\xb9\x81\x38\x0b\x97\x2c\xc2\x01\x2e\x96\xf8\x0e\xc2\x40\xdc\xfa\x00\x77\x2f\x0e\xde\x39\x47\xa8\xce\x15\x1c\x03\xf9\x60\x01\x8d\xe1\x1c\x64\x53\xe8\x7e\x69\xfe\x9e\xc7\x7f\x04\x17\xed\x75\xa7\x46\x91\xfa\x09\xc7\x03\xbe\x6b\x21\x45\xb3\x53\x49\x50\xbc\xd1\xd5\xb9\xaa\x4f\xa7\x63\x7d\xf8\x0c\xd4\xfb\xb1\x4f\xaa\x0f\x18\x5b\x5b\xef\x09\xcd\x6d\xd3\x87\x56\xe9\x5f\xd7\x68\x5c\x74\x98\x0b\x4d\x4f\x35\x7d\xfe\xd9\xe3\x95\x59\x96\x7b\xfc\x08\x00\x00\xff\xff\xcc\x55\x7b\xd0\xef\x01\x00\x00")
+var _templatesIndexHtml = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x74\x91\xb1\x6e\xc2\x30\x10\x86\x77\x9e\xe2\xe4\x1d\x2c\xf6\x90\x81\x36\x1b\x12\x03\x12\x6b\x74\x38\x26\x76\xb9\xf8\x22\xfb\x1c\x54\x21\xde\xbd\x6a\x9a\xa8\x69\xab\x4e\xb9\xe8\xf3\xff\xf9\x97\xef\xf1\x00\xb1\x5d\x4f\x28\x16\xd4\x3c\x25\xed\x2c\x36\x36\x6e\x9c\x74\xa4\xe0\xf9\x5c\x15\x8d\x1f\xc0\x10\xa6\xb4\x53\x86\x83\xa0\x0f\x36\xaa\x72\x05\x00\xb0\x64\x5f\xb9\x09\x8c\x30\xd3\xcc\x02\x0e\x10\x70\x58\xf7\x9e\x28\x41\x9f\x89\xd6\xd1\xb7\x4e\x54\x59\xe8\x4c\x93\x4b\x37\x7e\xf8\xab\x7d\xcb\xdd\x85\x25\x72\x58\x9a\xdd\xb6\x7c\xf5\xc9\x70\x6c\x0a\xed\xb6\x0b\xd0\xcf\x31\xb2\xd8\xa8\xf2\x85\xbc\xb9\x81\x38\x0b\x97\x2c\xc2\x01\x2e\x96\xf8\x0e\xc2\x40\xdc\xfa\x00\x77\x2f\x0e\xde\x39\x47\xa8\xce\x15\x1c\x03\xf9\x60\x01\x8d\xe1\x1c\x64\x53\xe8\x7e\x69\xfe\x9e\xc7\x7f\x04\x17\xed\x75\xa7\x46\x91\xfa\x09\xc7\x03\xbe\x6b\x21\x45\xb3\x53\x3a\x09\x8a\x37\xba\x3a\x57\xf5\xe9\x74\xac\x0f\x9f\x89\x7a\x3f\x16\x4a\xf5\x01\x63\x6b\xeb\x3d\xa1\xb9\x6d\xfa\xd0\x2a\xfd\xeb\x1e\x8d\x8b\x12\x73\xa3\xe9\xad\xa6\xcf\x3f\x8b\xbc\x32\xcb\x72\x91\x1f\x01\x00\x00\xff\xff\x13\x7f\xac\x66\xf0\x01\x00\x00")
 
 func templatesIndexHtmlBytes() ([]byte, error) {
 	return bindataRead(
@@ -232,7 +232,7 @@ func templatesIndexHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/index.html", size: 495, mode: os.FileMode(420), modTime: time.Unix(1492838953, 0)}
+	info := bindataFileInfo{name: "templates/index.html", size: 496, mode: os.FileMode(420), modTime: time.Unix(1509421319, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -252,7 +252,7 @@ func templatesLayoutHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/layout.html", size: 601, mode: os.FileMode(420), modTime: time.Unix(1492838963, 0)}
+	info := bindataFileInfo{name: "templates/layout.html", size: 601, mode: os.FileMode(420), modTime: time.Unix(1509212444, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -309,15 +309,15 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"static/Discord-Logo-Wordmark-WnC.png":         staticDiscordLogoWordmarkWncPng,
+	"static/Discord-Logo-Wordmark-WnC.png": staticDiscordLogoWordmarkWncPng,
 	"static/EVE_SSO_Login_Buttons_Large_Black.png": staticEve_sso_login_buttons_large_blackPng,
-	"static/stylesheets/bootstrap.min.css":         staticStylesheetsBootstrapMinCss,
-	"static/stylesheets/main.css":                  staticStylesheetsMainCss,
-	"templates/authd.html":                         templatesAuthdHtml,
-	"templates/footer.html":                        templatesFooterHtml,
-	"templates/header.html":                        templatesHeaderHtml,
-	"templates/index.html":                         templatesIndexHtml,
-	"templates/layout.html":                        templatesLayoutHtml,
+	"static/stylesheets/bootstrap.min.css": staticStylesheetsBootstrapMinCss,
+	"static/stylesheets/main.css": staticStylesheetsMainCss,
+	"templates/authd.html": templatesAuthdHtml,
+	"templates/footer.html": templatesFooterHtml,
+	"templates/header.html": templatesHeaderHtml,
+	"templates/index.html": templatesIndexHtml,
+	"templates/layout.html": templatesLayoutHtml,
 }
 
 // AssetDir returns the file names below a certain
@@ -359,21 +359,20 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
-
 var _bintree = &bintree{nil, map[string]*bintree{
 	"static": &bintree{nil, map[string]*bintree{
-		"Discord-Logo-Wordmark-WnC.png":         &bintree{staticDiscordLogoWordmarkWncPng, map[string]*bintree{}},
+		"Discord-Logo-Wordmark-WnC.png": &bintree{staticDiscordLogoWordmarkWncPng, map[string]*bintree{}},
 		"EVE_SSO_Login_Buttons_Large_Black.png": &bintree{staticEve_sso_login_buttons_large_blackPng, map[string]*bintree{}},
 		"stylesheets": &bintree{nil, map[string]*bintree{
 			"bootstrap.min.css": &bintree{staticStylesheetsBootstrapMinCss, map[string]*bintree{}},
-			"main.css":          &bintree{staticStylesheetsMainCss, map[string]*bintree{}},
+			"main.css": &bintree{staticStylesheetsMainCss, map[string]*bintree{}},
 		}},
 	}},
 	"templates": &bintree{nil, map[string]*bintree{
-		"authd.html":  &bintree{templatesAuthdHtml, map[string]*bintree{}},
+		"authd.html": &bintree{templatesAuthdHtml, map[string]*bintree{}},
 		"footer.html": &bintree{templatesFooterHtml, map[string]*bintree{}},
 		"header.html": &bintree{templatesHeaderHtml, map[string]*bintree{}},
-		"index.html":  &bintree{templatesIndexHtml, map[string]*bintree{}},
+		"index.html": &bintree{templatesIndexHtml, map[string]*bintree{}},
 		"layout.html": &bintree{templatesLayoutHtml, map[string]*bintree{}},
 	}},
 }}
@@ -424,6 +423,7 @@ func _filePath(dir, name string) string {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
 	return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
 }
+
 
 func assetFS() *assetfs.AssetFS {
 	assetInfo := func(path string) (os.FileInfo, error) {
