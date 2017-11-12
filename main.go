@@ -23,6 +23,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"golang.org/x/oauth2"
 )
 
 type ResultModel struct {
@@ -90,7 +91,7 @@ func main() {
 	service.HandleFunc("/", middleware(handleIndex))
 	service.HandleFunc("/login", middleware(handleEveLogin))
 	service.HandleFunc(configuration.OAuth.CallBackUrl, middleware(handleEveCallback))
-	service.HandleFunc("/test", middleware(handleValidateAgain))
+	//service.HandleFunc("/test", middleware(handleValidateAgain))
 
 	// initialise service
 	if err := service.Init(); err != nil {
@@ -163,7 +164,7 @@ func handleValidateAgain(w http.ResponseWriter, r *http.Request) {
 
 	// Get the authenticator from the request context
 	ssoauth := authenticatorFromContext(r.Context())
-	tokenTxt, ok := sess.Get("token").(goesi.CRESTToken)
+	tokenTxt, ok := sess.Get("token").(oauth2.Token)
 	if !ok {
 		fmt.Fprint(w, "no token found\n")
 		return
@@ -249,7 +250,7 @@ func doAuth(w http.ResponseWriter, r *http.Request, sess session.Store) (*string
 			Ticker: corporation.Ticker,
 		},
 		Character: &abaeve_auth.Character{
-			Id:   verifyReponse.CharacterID,
+			Id:   int64(verifyReponse.CharacterID),
 			Name: character.Name,
 		},
 		Token: code,
