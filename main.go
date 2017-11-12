@@ -11,8 +11,8 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"git.maurer-it.net/abaeve/auth-srv/proto"
-	"git.maurer-it.net/abaeve/services-common/config"
+	"github.com/abaeve/auth-srv/proto"
+	"github.com/abaeve/services-common/config"
 	"github.com/antihax/goesi"
 	"github.com/antihax/goesi/esi"
 	"github.com/astaxie/beego/session"
@@ -55,7 +55,7 @@ func init() {
 	httpClient := httpcache.NewMemoryCacheTransport().Client()
 
 	// Get the ESI API Client
-	apiClient = goesi.NewAPIClient(httpClient, "aba-auth-web maurer.it@gmail.com https://git.maurer-it.net/abaeve/auth-web")
+	apiClient = goesi.NewAPIClient(httpClient, "aba-auth-web maurer.it@gmail.com https://github.com/abaeve/auth-web")
 
 	fullCallbackUrl := configuration.OAuth.CallBackProtocol + "://" + configuration.OAuth.CallBackHost + configuration.OAuth.CallBackUrl
 
