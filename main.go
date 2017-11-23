@@ -56,7 +56,7 @@ func init() {
 	httpClient := httpcache.NewMemoryCacheTransport().Client()
 
 	// Get the ESI API Client
-	apiClient = goesi.NewAPIClient(httpClient, "aba-auth-web maurer.it@gmail.com https://github.com/abaeve/auth-web")
+	apiClient = goesi.NewAPIClient(httpClient, "aba-auth-web maurer.it@gmail.com https://github.com/chremoas/auth-web")
 
 	fullCallbackUrl := configuration.OAuth.CallBackProtocol + "://" + configuration.OAuth.CallBackHost + configuration.OAuth.CallBackUrl
 
