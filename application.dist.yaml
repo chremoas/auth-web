@@ -1,7 +1,8 @@
 namespace: com.aba.srv
 name: authweb
-listenHost: localhost
-listenPort: 3000
+net:
+  listenHost: localhost
+  listenPort: 3000
 oauth:
   clientId: some client id from CCP
   clientSecret: some secret from CCP
