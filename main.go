@@ -38,6 +38,7 @@ var apiClient *goesi.APIClient
 var configuration config.Configuration
 var authenticator *goesi.SSOAuthenticator
 var templates = template.New("")
+var name = "auth"
 
 var version string = "1.0.0"
 
@@ -81,7 +82,7 @@ func init() {
 
 func main() {
 	service := web.NewService(
-		web.Name(configuration.Namespace+"."+configuration.Name),
+		web.Name(configuration.LookupService("web", name)),
 		web.Version(version),
 		web.Address(configuration.Net.ListenHost+":"+
 			strconv.Itoa(configuration.Net.ListenPort)),
@@ -151,7 +152,7 @@ func handleEveCallback(w http.ResponseWriter, r *http.Request) {
 			Title:      "Authd Up",
 			Auth:       *internalAuthCode,
 			DiscordUrl: configuration.Discord.InviteUrl,
-			Name:       configuration.Name,
+			Name:       name,
 		},
 	)
 }
@@ -267,7 +268,7 @@ func doAuth(w http.ResponseWriter, r *http.Request, sess session.Store) (*string
 		}
 	}
 
-	internalAuthClient := abaeve_auth.NewUserAuthenticationClient(configuration.Namespace+"."+configuration.ServiceNames.AuthSrv, client.DefaultClient)
+	internalAuthClient := abaeve_auth.NewUserAuthenticationClient(configuration.LookupService("web", name), client.DefaultClient)
 	response, err := internalAuthClient.Create(
 		context.Background(),
 		request,
