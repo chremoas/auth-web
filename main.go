@@ -256,7 +256,7 @@ func doAuth(w http.ResponseWriter, r *http.Request, sess session.Store) (*string
 		},
 		Token: code,
 		//TODO: When we implement custom scopes, send them over as well
-		//AuthScope:
+		AuthScope: []string{"invalid"},
 	}
 
 	if corporation.AllianceId != 0 {
@@ -268,11 +268,16 @@ func doAuth(w http.ResponseWriter, r *http.Request, sess session.Store) (*string
 		}
 	}
 
-	internalAuthClient := abaeve_auth.NewUserAuthenticationClient(configuration.LookupService("web", name), client.DefaultClient)
+	internalAuthClient := abaeve_auth.NewUserAuthenticationClient(configuration.LookupService("srv", "auth"), client.DefaultClient)
+
+	fmt.Printf("Auth SRV: %s", configuration.LookupService("srv","auth"))
+
 	response, err := internalAuthClient.Create(
 		context.Background(),
 		request,
 	)
+
+	fmt.Printf("%v\n", response)
 
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Had an issue authing internally: (%s)", err))
