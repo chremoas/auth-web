@@ -247,7 +247,7 @@ func doAuth(w http.ResponseWriter, r *http.Request, sess session.Store) (*string
 	request := &abaeve_auth.AuthCreateRequest{
 		Corporation: &abaeve_auth.Corporation{
 			Id:     int64(character.CorporationId),
-			Name:   corporation.CorporationName,
+			Name:   corporation.Name,
 			Ticker: corporation.Ticker,
 		},
 		Character: &abaeve_auth.Character{
@@ -263,7 +263,7 @@ func doAuth(w http.ResponseWriter, r *http.Request, sess session.Store) (*string
 		request.Alliance = &abaeve_auth.Alliance{
 			//TODO: Damn, why did I put int64 here?  At least I can upcast...
 			Id:     int64(corporation.AllianceId),
-			Name:   alliance.AllianceName,
+			Name:   alliance.Name,
 			Ticker: alliance.Ticker,
 		}
 	}
