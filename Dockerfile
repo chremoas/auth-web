@@ -1,14 +1,7 @@
-FROM arm32v6/alpine
-LABEL maintainer="maurer.it@gmail.com"
+FROM scratch
+MAINTAINER Brian Hechinger <wonko@4amlunch.net>
 
-RUN apk update && apk upgrade && apk add ca-certificates
+ADD auth-web-linux-amd64 auth-web
+VOLUME /etc/chremoas
 
-ADD ./auth-web /
-WORKDIR /
-
-RUN rm -rf /var/cache/apk/*
-
-ENV MICRO_REGISTRY_ADDRESS chremoas-consul:8500
-
-CMD [""]
-ENTRYPOINT ["./auth-web"]
+ENTRYPOINT ["/auth-web", "--configuration_file", "/etc/chremoas/auth-bot.yaml"]
