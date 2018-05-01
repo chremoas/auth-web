@@ -268,7 +268,7 @@ func doAuth(w http.ResponseWriter, r *http.Request, sess session.Store) (*string
 		}
 	}
 
-	internalAuthClient := abaeve_auth.NewUserAuthenticationClient(configuration.LookupService("srv", "auth"), client.DefaultClient)
+	internalAuthClient := abaeve_auth.NewUserAuthenticationService(configuration.LookupService("srv", "auth"), client.DefaultClient)
 
 	fmt.Printf("Auth SRV: %s", configuration.LookupService("srv","auth"))
 
