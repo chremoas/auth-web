@@ -48,7 +48,7 @@ func init() {
 	globalSessions, _ = session.NewManager("memory", &session.ManagerConfig{CookieName: "gosessionid", EnableSetCookie: true, Gclifetime: 600})
 	go globalSessions.GC()
 
-	err := configuration.Load("application.yaml")
+	err := configuration.Load("/etc/chremoas/chremoas.yaml")
 
 	if err != nil {
 		panic("Had an issue parsing the application.yaml: " + err.Error())
