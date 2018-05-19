@@ -92,7 +92,7 @@ func staticDiscordLogoWordmarkWncPng() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "static/Discord-Logo-Wordmark-WnC.png", size: 10805, mode: os.FileMode(420), modTime: time.Unix(1509212444, 0)}
+	info := bindataFileInfo{name: "static/Discord-Logo-Wordmark-WnC.png", size: 10805, mode: os.FileMode(420), modTime: time.Unix(1511399139, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -112,7 +112,7 @@ func staticEve_sso_login_buttons_large_blackPng() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "static/EVE_SSO_Login_Buttons_Large_Black.png", size: 4008, mode: os.FileMode(420), modTime: time.Unix(1509212444, 0)}
+	info := bindataFileInfo{name: "static/EVE_SSO_Login_Buttons_Large_Black.png", size: 4008, mode: os.FileMode(420), modTime: time.Unix(1511399139, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -132,7 +132,7 @@ func staticStylesheetsBootstrapMinCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "static/stylesheets/bootstrap.min.css", size: 100649, mode: os.FileMode(420), modTime: time.Unix(1509212444, 0)}
+	info := bindataFileInfo{name: "static/stylesheets/bootstrap.min.css", size: 100649, mode: os.FileMode(420), modTime: time.Unix(1511399139, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -152,7 +152,7 @@ func staticStylesheetsMainCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "static/stylesheets/main.css", size: 1263, mode: os.FileMode(420), modTime: time.Unix(1509212444, 0)}
+	info := bindataFileInfo{name: "static/stylesheets/main.css", size: 1263, mode: os.FileMode(420), modTime: time.Unix(1511399139, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -172,7 +172,7 @@ func templatesAuthdHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/authd.html", size: 823, mode: os.FileMode(420), modTime: time.Unix(1509212444, 0)}
+	info := bindataFileInfo{name: "templates/authd.html", size: 823, mode: os.FileMode(420), modTime: time.Unix(1514320089, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -192,7 +192,7 @@ func templatesFooterHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/footer.html", size: 15, mode: os.FileMode(420), modTime: time.Unix(1509212444, 0)}
+	info := bindataFileInfo{name: "templates/footer.html", size: 15, mode: os.FileMode(420), modTime: time.Unix(1514320089, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -212,7 +212,7 @@ func templatesHeaderHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/header.html", size: 551, mode: os.FileMode(420), modTime: time.Unix(1509421395, 0)}
+	info := bindataFileInfo{name: "templates/header.html", size: 551, mode: os.FileMode(420), modTime: time.Unix(1514320089, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -232,7 +232,7 @@ func templatesIndexHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/index.html", size: 496, mode: os.FileMode(420), modTime: time.Unix(1509421319, 0)}
+	info := bindataFileInfo{name: "templates/index.html", size: 496, mode: os.FileMode(420), modTime: time.Unix(1526660686, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -252,7 +252,7 @@ func templatesLayoutHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/layout.html", size: 601, mode: os.FileMode(420), modTime: time.Unix(1509212444, 0)}
+	info := bindataFileInfo{name: "templates/layout.html", size: 601, mode: os.FileMode(420), modTime: time.Unix(1514320089, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
