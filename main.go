@@ -18,7 +18,7 @@ import (
 	"github.com/chremoas/services-common/config"
 	"github.com/gregjones/httpcache"
 	"github.com/micro/go-micro/client"
-	web "github.com/micro/go-web"
+	"github.com/micro/go-micro/web"
 	"golang.org/x/oauth2"
 	"html/template"
 	"log"
