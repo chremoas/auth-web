@@ -11,19 +11,19 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/chremoas/auth-srv/proto"
-	"github.com/chremoas/services-common/config"
 	"github.com/antihax/goesi"
 	"github.com/antihax/goesi/esi"
 	"github.com/astaxie/beego/session"
+	"github.com/chremoas/auth-srv/proto"
+	"github.com/chremoas/services-common/config"
 	"github.com/gregjones/httpcache"
 	"github.com/micro/go-micro/client"
-	web "github.com/micro/go-web"
+	"github.com/micro/go-micro/web"
+	"golang.org/x/oauth2"
 	"html/template"
 	"log"
 	"net/http"
 	"strconv"
-	"golang.org/x/oauth2"
 )
 
 type ResultModel struct {
@@ -171,11 +171,11 @@ func handleValidateAgain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tokenSource, err := ssoauth.TokenSource(&tokenTxt)
-	if err != nil {
-		fmt.Fprintf(w, "Had some kind of error getting the tokenSource '%s'\n", err)
-		return
-	}
+	tokenSource := ssoauth.TokenSource(&tokenTxt)
+	//if err != nil {
+	//	fmt.Fprintf(w, "Had some kind of error getting the tokenSource '%s'\n", err)
+	//	return
+	//}
 
 	v, err := ssoauth.Verify(tokenSource)
 	if err != nil {
@@ -212,12 +212,12 @@ func doAuth(w http.ResponseWriter, r *http.Request, sess session.Store) (*string
 		return nil, errors.New(fmt.Sprintf("Code exchange failed with '%s'\n", err))
 	}
 
-	tokenSource, err := ssoauth.TokenSource(token)
-	if err != nil {
-		fmt.Printf("Token retrieve failed with '%s'\n", err)
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		return nil, errors.New(fmt.Sprintf("Token retrieve failed with '%s'\n", err))
-	}
+	tokenSource := ssoauth.TokenSource(token)
+	//if err != nil {
+	//	fmt.Printf("Token retrieve failed with '%s'\n", err)
+	//	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+	//	return nil, errors.New(fmt.Sprintf("Token retrieve failed with '%s'\n", err))
+	//}
 
 	verifyReponse, err := ssoauth.Verify(tokenSource)
 	if err != nil {
@@ -270,7 +270,7 @@ func doAuth(w http.ResponseWriter, r *http.Request, sess session.Store) (*string
 
 	internalAuthClient := abaeve_auth.UserAuthenticationServiceClient(configuration.LookupService("srv", "auth"), client.DefaultClient)
 
-	fmt.Printf("Auth SRV: %s", configuration.LookupService("srv","auth"))
+	fmt.Printf("Auth SRV: %s", configuration.LookupService("srv", "auth"))
 
 	response, err := internalAuthClient.Create(
 		context.Background(),
