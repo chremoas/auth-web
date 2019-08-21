@@ -1,4 +1,3 @@
 application.yaml
 auth-web
-vendor/
 /auth-web-linux-amd64
