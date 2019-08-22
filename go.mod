@@ -10,6 +10,6 @@ require (
 	github.com/elazarl/go-bindata-assetfs v1.0.0
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79
 	github.com/mailru/easyjson v0.0.0-20190626092158-b2ccc519800e // indirect
-	github.com/micro/go-micro v1.8.1
+	github.com/micro/go-micro v1.9.1
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 )
