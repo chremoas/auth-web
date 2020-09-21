@@ -1,6 +1,6 @@
 module github.com/chremoas/auth-web
 
-go 1.12
+go 1.14
 
 require (
 	github.com/antihax/goesi v0.0.0-20190723215635-487b927dc566
@@ -13,3 +13,6 @@ require (
 	github.com/micro/go-micro v1.9.1
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 )
+
+replace github.com/chremoas/auth-web => ../auth-web
+replace github.com/hashicorp/consul => github.com/hashicorp/consul v1.5.1
