@@ -19,10 +19,10 @@ github.com/astaxie/beego/session
 github.com/astaxie/beego/utils
 # github.com/cheekybits/genny v1.0.0
 github.com/cheekybits/genny/generic
-# github.com/chremoas/auth-srv v1.2.5
+# github.com/chremoas/auth-srv v1.3.0
 ## explicit
 github.com/chremoas/auth-srv/proto
-# github.com/chremoas/services-common v1.2.5
+# github.com/chremoas/services-common v1.3.0
 ## explicit
 github.com/chremoas/services-common/config
 # github.com/coreos/etcd v3.3.13+incompatible
