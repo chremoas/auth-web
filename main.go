@@ -17,6 +17,7 @@ import (
 	"github.com/chremoas/auth-srv/proto"
 	"github.com/chremoas/services-common/config"
 	"github.com/gregjones/httpcache"
+	"github.com/micro/cli"
 	"github.com/micro/go-micro/client"
 	"github.com/micro/go-micro/web"
 	"golang.org/x/oauth2"
@@ -33,6 +34,7 @@ type ResultModel struct {
 	Name       string
 }
 
+var confFile string
 var globalSessions *session.Manager
 var apiClient *goesi.APIClient
 var configuration config.Configuration
@@ -84,8 +86,16 @@ func main() {
 	service := web.NewService(
 		web.Name(configuration.LookupService("web", name)),
 		web.Version(version),
-		web.Address(configuration.Net.ListenHost+":"+
-			strconv.Itoa(configuration.Net.ListenPort)),
+		web.Address(configuration.Net.ListenHost+":"+strconv.Itoa(configuration.Net.ListenPort)),
+		web.Flags(
+			cli.StringFlag{
+				Name:        "configuration_file",
+				Usage:       "The yaml configuration file for the service being loaded",
+				Value:       "/etc/auth-srv/application.yaml",
+				EnvVar:      "CONFIGURATION_FILE",
+				Destination: &confFile,
+			},
+		),
 	)
 
 	service.Handle("/static/", http.StripPrefix("/static/", http.FileServer(assetFS())))
