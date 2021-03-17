@@ -22,7 +22,7 @@ github.com/cheekybits/genny/generic
 # github.com/chremoas/auth-srv v1.3.0
 ## explicit
 github.com/chremoas/auth-srv/proto
-# github.com/chremoas/services-common v1.3.1
+# github.com/chremoas/services-common v1.3.2
 ## explicit
 github.com/chremoas/services-common/config
 # github.com/coreos/etcd v3.3.13+incompatible
@@ -117,6 +117,7 @@ github.com/mailru/easyjson/jwriter
 # github.com/marten-seemann/qtls v0.3.2
 github.com/marten-seemann/qtls
 # github.com/micro/cli v0.2.0
+## explicit
 github.com/micro/cli
 # github.com/micro/go-micro v1.9.1
 ## explicit
