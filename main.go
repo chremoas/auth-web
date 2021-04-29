@@ -11,6 +11,11 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"html/template"
+	"log"
+	"net/http"
+	"strconv"
+
 	"github.com/antihax/goesi"
 	"github.com/antihax/goesi/esi"
 	"github.com/astaxie/beego/session"
@@ -21,10 +26,6 @@ import (
 	"github.com/micro/go-micro/client"
 	"github.com/micro/go-micro/web"
 	"golang.org/x/oauth2"
-	"html/template"
-	"log"
-	"net/http"
-	"strconv"
 )
 
 type ResultModel struct {
@@ -42,7 +43,7 @@ var authenticator *goesi.SSOAuthenticator
 var templates = template.New("")
 var name = "auth"
 
-var version string = "1.0.0"
+var version = "1.0.0"
 
 // Then, initialize the session manager
 func init() {
